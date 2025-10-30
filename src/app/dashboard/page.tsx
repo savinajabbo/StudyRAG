@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/app/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { LogOut, Upload, MessageSquare, Settings } from "lucide-react";
 
 export default function DashboardPage() {
     const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -31,30 +32,42 @@ export default function DashboardPage() {
     };
 
     return (
-        <main className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white flex felx-col">
-            <nav className="w-full flex justify-between items-center px-8 py-4 border-b border-gray-800 bg-black/40 backdrop-blur-md">
-                <h1 className="text-2xl font-bold tracking-tight">
-                    <span className="text-sky-400">Study</span>RAG
-                </h1>
-                <div className="flex items-center gap-4">
-                    {userEmail && (
-                        <span className="text-gray-400 text-sm hidden sm:block">
-                            {userEmail}
-                        </span>
-                    )}
-                    <button
-                        onClick={handleLogout}
-                        className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm"
-                    >
+        <main className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white flex">
+            <aside className="w-64 bg-gray-900 border-r border-gray-800 flex flex-col justify-between">
+                <div>
+                    <div className="p-6 border-b border-gray-800">
+                        <h1 className="text-2xl font-bold text-sky-400">Study<span className="text-white">RAG</span></h1>
+                    </div>
+
+                    <nav className="flex flex-col mt-6 space-y-1">
+                        <button className="flex items-center gap-3 px-6 py-2 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors cursor-pointer">
+                            <MessageSquare className="w-5 h-5" />
+                            upload notes
+                        </button>
+                        <button className="flex items-center gap-3 px-6 py-2 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors cursor-pointer">
+                            <MessageSquare className="w-5 h-5" />
+                            ask a question
+                        </button>
+                        <button className="flex items-center gap-3 px-6 py-2 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors cursor-pointer">
+                            <Settings className="w-5 h-5" />
+                            settings
+                        </button>
+                    </nav>
+                </div>
+                
+                <div className="border-t border-gray-800 p-6">
+                    <p className="text-sm text-gray-400 mb-3 truncate">{userEmail}</p>
+                    <button className="flex items-center gap-3 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm text-gray-200 transition-colors w-full justify-center cursor-pointer">
+                        <LogOut className="w-4 h-4" />
                         log out
                     </button>
                 </div>
-            </nav>
+            </aside>
 
             <section className="flex-1 flex flex-col items-center justify-center justify-center px-6">
-                <h2 className="text-3xl font-semibold mb-4"> welcome to your dashboard</h2>
+                <h2 className="text-3xl font-semibold mb-4"> welcome back!</h2>
                 <p className="text-gray-400 text-center max-w-lg">
-                    upload your notes, ask ai-powered questions, and get tailored study help — all in one place.
+                    upload your notes, ask questions, and get tailored study help<br/><i>all in one place</i>
                 </p>
 
                 <div className="flex gal-4 mt-8">

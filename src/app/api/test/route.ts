@@ -3,11 +3,12 @@ import { createSupabaseServer } from "@/app/lib/supabase/server";
 
 export async function GET() {
     const supabase = createSupabaseServer();
-    const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user) {
-        return NextResponse.json({ loggedIn: false });
+    const { data, error } = await supabase.from("profile").select("*").single();
+
+    if (error) {
+        return NextResponse.json({ connected: false, error: error.message });
     }
 
-    return NextResponse.json({ loggedIn: true, email: user.email });
+    return NextResponse.json({ connected: true, sampleData: data });
 }

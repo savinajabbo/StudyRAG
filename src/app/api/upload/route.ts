@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     if (!file) {
         return NextResponse.json({ error: "no file uploaded"}, {status: 400});
     }
-
+    
     // save the file temporarily
     const tempDir = path.join(os.tmpdir(), file.name);
     const buffer = Buffer.from(await file.arrayBuffer());
@@ -80,7 +80,7 @@ export async function POST(req: Request) {
                 created_at: new Date(),
             },
         ]);
-        
+
         if (error) throw error;
 
         return NextResponse.json({ message: "file processed successfully", data });

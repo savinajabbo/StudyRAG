@@ -18,6 +18,25 @@ export default function ChatInput({ onSend, onUpload }: ChatInputProps) {
         onSend(message.trim());
         setMessage("");
     };
+    
+    const handleFileUpload = async() => {
+        const input = document.createElement("input");
+        input.type = "file",
+        input.accept = ".pdf,.docx,.txt,.md,.csv";
+        input.onchange = async (event: any) => {
+            const file = event.target.files?.[0];
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append("file", file);
+
+            await fetch("/api/upload", {
+                method: "POST",
+                body: formData,
+            });
+        };
+        input.click();
+    };
 
     useEffect(() => {
         const textarea = textareaRef.current;
@@ -35,7 +54,7 @@ export default function ChatInput({ onSend, onUpload }: ChatInputProps) {
 
     return (
         <form onSubmit={handleSubmit} className="flex items-center bg-[#0e0f12] border border-gray-700 rounded-4xl shadow-lg px-4 py-2">
-            <button type="button" onClick={onUpload} className="p-2 rounded-md hover:bg-gray-800 transition cursor-pointer" title="upload notes">
+            <button type="button" onClick={handleFileUpload} className="p-2 rounded-md hover:bg-gray-800 transition cursor-pointer" title="upload notes">
                 <Upload className="w-5 h-5 text-sky-400" />
             </button>
 

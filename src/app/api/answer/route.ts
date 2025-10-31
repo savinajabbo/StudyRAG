@@ -1,5 +1,5 @@
 /**
- * TO DO
+ * TO DO:
  * - take the query from user
  * - embed the query 
  * - feed into openai gpt

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/app/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { LogOut, Upload, MessageSquare, Settings } from "lucide-react";
+import { LogOut, MessageSquare, Settings } from "lucide-react";
 import ChatInput from "@/components/ChatInput";
 
 export default function DashboardPage() {

@@ -25,7 +25,7 @@ const openai = new OpenAI({
 
 export async function POST(req: NextRequest) {
     try {
-        const { query } = await req.json();
+        const { query, chatHistory = [] } = await req.json();
         if (!query) {
             return new Response("query required", { status: 400 });
         }
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
         // supabase matching
         const { data: matches, error } = await supabase.rpc("match_documents", {
             query_embedding: queryEmbedding,
-            match_threshold: 0.1,
+            match_threshold: 0.15,
             match_count: 5,
         });
         if (error) throw error;
@@ -49,24 +49,29 @@ export async function POST(req: NextRequest) {
         // make context for gpt
         const context = matches?.map((m: any) => m.content).filter(Boolean).join("\n\n") || "no relevant context found";
 
+        const systemPrompt = `
+            You are StudyRAG, a friendly and smart AI study assistant. When possible, base your answers strictly on the student's uploaded notes (context provided below). If the notes don't contain the answer, use your general reasoning ability to respond helpfully and conversationally. Stay factual, concise, and supportive. Imagine you'e a study buddy.
+            Context from notes: 
+            ${context}`.trim();
+        
+        const recentMessages = chatHistory.slice(-6).map((m: any) => ({
+            role: m.role,
+            content: m.content,
+        }));
+
         // gpt's response
         const stream = await openai.chat.completions.stream({
             model: "gpt-4o-mini",
             messages: [
-                {
-                    role: "system",
-                    content: "You are StudyRAG, a helpful assistant. Answer questions strictly using the context below. If the context doesn't contain the answer, say: 'I couldn't find that in your notes.'",
-                },
-                {
-                    role: "user",
-                    content: `Context:\n${context}\n\nQuestion: ${query}`,
-                },
+                { role: "system", content: systemPrompt },
+                ...recentMessages,
+                { role: "user", content: query },
             ],
             stream: true,
         });
 
+        // stream back to client
         const encoder = new TextEncoder();
-
         const readable = new ReadableStream({
             async start(controller) {
                 for await (const chunk of stream) {

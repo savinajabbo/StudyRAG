@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/app/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { LogOut, MessageSquare, Settings } from "lucide-react";
-import ChatInput from "@/components/ChatInput";
+import ChatView from "@/components/ChatView";
 
 export default function DashboardPage() {
     const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -66,15 +66,7 @@ export default function DashboardPage() {
             </aside>
 
             <section className="flex-1 flex flex-col items-center justify-center justify-center px-6 section-y-8">
-                <h2 className="text-3xl font-semibold mb-4"> welcome back!</h2>
-                <p className="text-gray-400 text-center max-w-lg pb-20">
-                    upload your notes, ask questions, and get tailored study help<br/><i>all in one place</i>
-                </p>
-
-                <div className="relative max-w-2xl mx-auto w-full mb-10">
-                    <ChatInput onSend={(msg) => console.log("message sent", msg)} onUpload={() => console.log("upload clicked")} />
-                </div>
-
+                <ChatView />
             </section>
         </main>
     );

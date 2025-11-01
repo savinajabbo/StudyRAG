@@ -57,3 +57,5 @@ i built studyrag because traditional studying feels inefficient. students collec
 
 <b>built with...  </b>  
 next.js • supabase • openai • typescript • tailwindcss
+
+[![Athena Award Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Faward.athena.hackclub.com%2Fapi%2Fbadge)](https://award.athena.hackclub.com?utm_source=readme)

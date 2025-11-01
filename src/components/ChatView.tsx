@@ -138,7 +138,7 @@ export default function ChatView(props: ChatViewProps) {
     return (
         <div className="flex flex-col h-full bg-transparent text-gray-200">
             <ChatMessages messages={messages} />
-            <div className="sticky bottom-0 bg-[#0e0f12]/95 backdrop-blur-md border-gray-800 px-4 sm:px-8 py-3">
+            <div className="sticky bottom-0 bg-transparent backdrop-blur-md border-t border-gray-800 px-4 sm:px-8 py-4 flex justify-center">
                 <div className="flex justify-center">
                     <ChatInput onSend={handleSend} />
                 </div>

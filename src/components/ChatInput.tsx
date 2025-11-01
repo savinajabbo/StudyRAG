@@ -59,7 +59,7 @@ export default function ChatInput({ onSend, onUpload }: ChatInputProps) {
     }, [message, uploadedFile]);
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col bg-[#0e0f12] border border-gray-700 rounded-4xl shadow-lg px-4 py-2 w-full max-w-2xl">
+        <form onSubmit={handleSubmit} className="flex items-center gap-2 bg-[#111214] border border-gray-800 rounded-2xl px-4 py-3 w-full max-w-3xl shadow-md focus-within:ring-1 focus-within:ring-sky-500 transition-all">
 
             {uploadedFile && (
                 <div className="flex justify-start w-full mb-2 pl-1">
@@ -78,13 +78,18 @@ export default function ChatInput({ onSend, onUpload }: ChatInputProps) {
                     <Upload className="w-5 h-5 text-sky-400" />
                 </button>
 
-                <textarea ref={textareaRef} placeholder="ask anything" value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => {
+                <textarea
+                    ref={textareaRef}
+                    placeholder="ask anything..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault();
-                            handleSubmit(e);
+                        e.preventDefault();
+                        handleSubmit(e);
                         }
                     }}
-                    className="flex-1 bg-transparent outline-none px-3 text-gray-200 placeholder-gray-500 text-sm resize-none overflow-hidden leading-tight align-middle h-[1.6rem] py-0 max-h-24 scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-transparent"
+                    className="flex-1 bg-transparent text-gray-200 placeholder-gray-500 outline-none text-sm resize-none overflow-hidden leading-tight min-h-[1.8rem] max-h-24 scrollbar-thin scrollbar-thumb-sky-600 scrollbar-track-transparent"
                 />
                 <button type="submit" className="p-2 rounded-md bg-sky-500 hover:bg-sky-600 transition text-white cursor-pointer" title="Send">
                     <Send className="w-5 h-5" />

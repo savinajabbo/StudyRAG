@@ -12,25 +12,45 @@ interface Message {
     content: string;
 }
 
-export default function ChatView() {
+interface ChatViewProps {
+    chatId: string | null;
+}
+
+export default function ChatView(props: ChatViewProps) {
+    const { chatId } = props;
     const [messages, setMessages] = useState<Message[]>([]);
-    const [chatId, setChatId] = useState<string | null>(null);
+    const [localChatId, setLocalChatId] = useState<string | null>(null);
     const supabase = supabaseBrowser();
 
-    // create new chat record
+    // load existing messages
     useEffect(() => {
-        if (!chatId) {
+        const loadMessages = async () => {
+            if (!chatId) return;
+            const { data, error } = await supabase
+            .from("messages")
+            .select("id, role, content")
+            .eq("chat_id", chatId)
+            .order("created_at", { ascending: true });
+
+            if (!error && data) {
+                setMessages(data as Message[]);
+                setLocalChatId(chatId);
+            }
+        }; 
+        loadMessages();
+    }, [chatId, supabase]);
+    
+    useEffect(() => {
+        if (!localChatId) {
             const newId = uuidv4();
-            setChatId(newId);
+            setLocalChatId(newId);
         }
-    }, [chatId]);
+    }, [localChatId]);
 
     const saveMessage = async (role: "user" | "assistant", content: string) => {
-        const supabase = supabaseBrowser();
-        if (!chatId) return;
-
+        if (!localChatId) return;
         await supabase.from("messages").insert({
-            chat_id: chatId,
+            chat_id: localChatId,
             role,
             content,
         });
@@ -46,15 +66,15 @@ export default function ChatView() {
         };
         setMessages((prev) => [...prev, userMessage]);
 
-        if (!chatId) {
-            const newId = uuidv4();
-            setChatId(newId);
-
+        if (!chatId && localChatId) {
             const { error } = await supabase.from("chats").insert({
-                id: newId,
-                title: text.slice(0, 60),
+                id: localChatId,
+                title: text.slice(0, 60) || "new chat",
             });
-            if (error) console.error(error);
+            if (error) {
+                console.error("supabase error while creating chat:", error);
+                alert(`supabase error: ${error.message}`);
+            }
         }
 
         await saveMessage("user", text);
@@ -71,7 +91,7 @@ export default function ChatView() {
         const res = await fetch("/api/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ query: text, chatHistory: messages }),
+            body: JSON.stringify({ query: text, chatId: localChatId, chatHistory: messages }),
         });
 
         const reader = res.body?.getReader();
@@ -95,10 +115,28 @@ export default function ChatView() {
         }
 
         await saveMessage("assistant", result);
+
+        if (!chatId && localChatId) {
+            const { data, error } = await supabase
+                .from("chats")
+                .upsert({
+                id: localChatId,
+                title: text.slice(0, 60) || "new chat",
+                });
+
+            if (error) {
+                console.error("failed to create or upsert chat:", error.message);
+            } else {
+                console.log("chat created or updated:", localChatId);
+                window.dispatchEvent(new CustomEvent("chatCreated", { detail: localChatId }));
+            }
+        }
+
+
     };
 
     return (
-        <div className="flex flex-col h-screen bg-[#0e0f12] text-gray-200">
+        <div className="flex flex-col h-full bg-transparent text-gray-200">
             <ChatMessages messages={messages} />
             <div className="sticky bottom-0 bg-[#0e0f12]/95 backdrop-blur-md border-gray-800 px-4 sm:px-8 py-3">
                 <div className="flex justify-center">
